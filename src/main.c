@@ -23,20 +23,53 @@ int read_adc();
 void setup_gpio();
 void setup_pwm();
 void send_pulse() {
-    // Wait for GPIO2 to be low, timeout if it takes too long
-    int timeout = 1000; // 1 second timeout
-    while (gpio_get_level(GPIO_NUM_2) == 1 && timeout > 0) {
-        vTaskDelay(pdMS_TO_TICKS(10)); // Wait for 10 ms
-        timeout -= 10; // Decrease timeout
-    }
+    const char *TAG = "SEND_PULSE";
+    ESP_LOGI(TAG, "Sending pulse...");
+    return;
+}
 
-    if (timeout <= 0) {
-        ESP_LOGE("GPIO", "Timeout waiting for GPIO2 to go low");
-        return;
-    }
+void setup() {
+    const char *TAG = "SETUP";
+    ESP_LOGI(TAG, "Setting up...");
 
-    // GPIO2 is LOW, send pulse to GPIO11
-    gpio_set_level(GPIO_NUM_11, 1); // Set GPIO11 HIGH
+    // Setup GPIO
+    gpio_config_t io_conf = {
+        .intr_type = GPIO_INTR_DISABLE,         // Disable interrupts
+        .mode = GPIO_MODE_OUTPUT,               // Set as output mode
+        .pin_bit_mask = (1ULL << GPIO_NUM_11),  // Set GPIO11 as output
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,  // Disable pull-down
+        .pull_up_en = GPIO_PULLUP_DISABLE       // Disable pull-up
+    };
+
+    // Setup Timer
+    ledc_timer_config_t timer_conf = {
+        .speed_mode = LEDC_LOW_SPEED_MODE,      // Use low speed mode
+        .timer_num = LEDC_TIMER_0,              // Use timer 0
+        .duty_resolution = LEDC_TIMER_13_BIT,   // Set resolution to 13 bits
+        .freq_hz = 1000,                        // Set frequency to 1 kHz
+        .clk_cfg = LEDC_AUTO_CLK                 // Use automatic clock configuration
+    };
+
+    // Setup Channel
+    ledc_channel_config_t channel_conf = {
+        .speed_mode = LEDC_LOW_SPEED_MODE,       // Use low speed mode
+        .channel = LEDC_CHANNEL_0,               // Use channel 0
+        .timer_sel = LEDC_TIMER_0,               // Use timer 0
+        .intr_type = LEDC_INTR_DISABLE,          // Disable interrupts
+        .gpio_num = GPIO_NUM_2,                  // Use GPIO2
+        .duty = 4096,                            // Set initial duty cycle to 0
+        .hpoint = 0                              // Set high point to 0
+    };
+    
+    // Setup ADC
+    adc1_config_width(ADC_BITWIDTH_12);     // Set ADC bitwidth to 12 bits
+    adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11); // Set ADC channel attenuation
+
+    // Apply the configuration
+    gpio_config(&io_conf);              // Apply input configuration
+    ledc_timer_config(&timer_conf);     // Apply timer configuration
+    ledc_channel_config(&channel_conf); // Apply channel configuration
+    ESP_LOGI(TAG, "Setup complete.");
     return;
 }
 
@@ -47,15 +80,19 @@ void send_pulse() {
  */
 void app_main()
 {
+    (void)setup();
+    
+    
     const char *TAG = "APP_MAIN";
     int value = 0;
 
     // Initialize the ESP32C6
     ESP_LOGI(TAG, "Initializing ESP32C6...");
 
+
     // (void)setup_gpio();     // Setup GPIO
-    (void)setup_adc(); // Setup ADC
-    (void)setup_pwm(); // Setup PWM
+    // (void)setup_adc(); // Setup ADC
+    // (void)setup_pwm(); // Setup PWM
 
     // Body of the main function
     // (void)ledc_set_duty_and_update(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, 4096, 8192); // Set PWM duty cycle
@@ -69,11 +106,7 @@ void app_main()
     while (true)
     {
         // (void)gpio_set_level(GPIO_NUM_2, value); // Set GPIO2 to high
-
-        // ESP_LOGI(TAG, "PWM Value: %lu", ledc_get_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0));
-        ESP_LOGI(TAG, "GPIO2 Value: %d",    gpio_get_level(GPIO_NUM_2));        // Read GPIO2 value
-        ESP_LOGI(TAG, "GPIO11 Value: %d",   gpio_get_level(GPIO_NUM_11));       // Read GPIO11 value
-
+        ESP_LOGI(TAG, "PWM Value: %lu", ledc_get_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0));
         // ESP_LOGI(TAG, "ADC Value: %d", read_adc()); // Read ADC value
 
         (void)vTaskDelay(pdMS_TO_TICKS(25)); // Delay for 25 ms
@@ -82,12 +115,24 @@ void app_main()
     return;
 }
 
-void setup_pwm()
-{
+void setup_pwm() {
     const char *TAG = "PWM_SETUP";
+    unsigned long long gpio_mask = 0ULL;
+    gpio_config_t io_conf = {};
+
+
+    ESP_LOGI(TAG, "Setting up GPIO2");
+
+    gpio_mask |= (1ULL << GPIO_NUM_2); // GPIO2
+
+    io_conf.intr_type = GPIO_INTR_DISABLE;        // Disable interrupts
+    io_conf.mode = GPIO_MODE_INPUT;
+    io_conf.pin_bit_mask = gpio_mask;             // Set GPIO mask
+    io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE; // Disable pull-down
+    io_conf.pull_up_en = GPIO_PULLUP_DISABLE;     // Disable pull-up
+    gpio_config(&io_conf);                        // Apply the configuration
 
     ESP_LOGI(TAG, "Setting up PWM...");
-
     ledc_timer_config_t config = {};
     config.speed_mode = LEDC_LOW_SPEED_MODE;    // Use low speed mode
     config.timer_num = LEDC_TIMER_0;            // Use timer 0
