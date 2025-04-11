@@ -62,6 +62,7 @@ void app_main()
     ESP_LOGI(TAG, "Initializing ESP32C6 Timer...");
     (void)setup();
 
+    gpio_set_level(GPIO_NUM_19, 1);
     /* Delay in main */
     while (true)
     {   
@@ -74,6 +75,7 @@ void app_main()
     return;
 }
 
+
 void setup() {
     const char *TAG = "SETUP";
     ESP_LOGI(TAG, "Setting up...");
@@ -82,6 +84,7 @@ void setup() {
     unsigned long long gpio_mask = 0ULL;
     gpio_mask |= (1ULL << GPIO_NUM_2);  // GPIO2
     gpio_mask |= (1ULL << GPIO_NUM_11); // GPIO11    
+    gpio_mask |= (1ULL << GPIO_NUM_19); // GPIO19
 
     gpio_config_t io_conf = {
         .intr_type = GPIO_INTR_DISABLE,         // Disable interrupts
@@ -90,6 +93,8 @@ void setup() {
         .pull_down_en = GPIO_PULLDOWN_DISABLE,  // Disable pull-down
         .pull_up_en = GPIO_PULLUP_DISABLE       // Disable pull-up
     };
+
+    gpio_config(&io_conf); // Configure GPIO
 
     // Setup Timer
     esp_timer_handle_t timer_handle;
@@ -114,7 +119,6 @@ int read_adc()
     return adc1_get_raw(ADC1_CHANNEL_6); // Check Pinout
 }
 
-/* Interrupt Service Routines */
 static void IRAM_ATTR timer_isr(void *arg) {
     const char *TAG = "TIMER_ISR";
     static int value = 0;
