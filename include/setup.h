@@ -14,9 +14,6 @@
 #define CLK_OUTP_PIN GPIO_NUM_2
 #define SI_PULSE_PIN GPIO_NUM_11
 
-// Timer Configuration
-#define TIMER_PERIOD 20 // Timer period in milliseconds
-
 /**
  * @brief Initializes the program's environment and hardware configurations.
  *

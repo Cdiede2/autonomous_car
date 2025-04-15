@@ -31,8 +31,8 @@ void app_main()
     while (true)
     {
         // (void)send_pulse();
-        vTaskDelay(pdMS_TO_TICKS(250));              // Delay for 250ms
-        adc_value = adc1_get_raw(ADC1_CHANNEL_6);               // Read ADC value
+        vTaskDelay(pdMS_TO_TICKS(20));                 // Delay for 250ms
+        adc_value = adc1_get_raw(ADC1_CHANNEL_6);                        // Read ADC value
         
         // Print Boolean Representation of adc_value
         char binary_representation[17]; // Assuming a 32-bit ADC value
@@ -41,13 +41,9 @@ void app_main()
             binary_representation[16 - i] = (adc_value & (1 << i)) ? '1' : '0';
         }
         binary_representation[16] = '\0'; // Null-terminate the string
-        ESP_LOGI(TAG, "Base-2 Representation: %s", binary_representation);
-        ESP_LOGI(TAG, "ADC Value: %llu", adc_value); // Log ADC value
-
-
-        
-        
-        vTaskDelay(pdMS_TO_TICKS(250));              // Delay for 250ms
+        ESP_LOGI(TAG, "%llu Base-2 Representation: %s", adc_value, binary_representation);
+        // ESP_LOGI(TAG, "ADC Value: %llu", adc_value); // Log ADC value
+        // vTaskDelay(pdMS_TO_TICKS(250));              // Delay for 250ms
     }
     return;
 }
