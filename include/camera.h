@@ -35,22 +35,23 @@ static void IRAM_ATTR timer_isr(void *arg)
 {
     const char *TAG = "TIMER_ISR";
     static char value = 0;
+    static char clk_outp = 0;
 
-    gpio_set_level(GPIO_NUM_2, value);
+    // gpio_set_level(GPIO_NUM_2, clk_outp);
 
     if (send_pulse_flag)
     {
         if (!value)
         {
             // ESP_LOGI(TAG, "Sending pulse...");
-            vTaskDelay(pdMS_TO_TICKS(TIMER_PERIOD >> 1)); // Delay for 25ms
+            vTaskDelay(pdMS_TO_TICKS(10)); // Delay for 25ms
             gpio_set_level(GPIO_NUM_11, 1);               // Set GPIO11 high
         }
         else
         {
             // ESP_LOGI(TAG, "Sending pulse...");
             send_pulse_flag = false;
-            vTaskDelay(pdMS_TO_TICKS(TIMER_PERIOD >> 1)); // Delay for 25ms
+            vTaskDelay(pdMS_TO_TICKS(10)); // Delay for 25ms
             gpio_set_level(GPIO_NUM_11, 0);               // Set GPIO11 low
         }
     }
@@ -65,5 +66,6 @@ static void IRAM_ATTR timer_isr(void *arg)
     }
 
     value += 1;
+    clk_outp ^= 1;
     return;
 }

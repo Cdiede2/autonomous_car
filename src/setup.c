@@ -30,6 +30,6 @@ void setup() {
     adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_11); // Set attenuation
 
     esp_timer_create(&timer_args, &timer_handle);   // Create timer
-    esp_timer_start_periodic(timer_handle, TIMER_PERIOD); 
+    esp_timer_start_periodic(timer_handle, 20); 
     return;
 }
