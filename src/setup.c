@@ -1,8 +1,8 @@
 #include "setup.h"
 
 // Timer Configuration
-#define TIMER_PERIOD_LF 4 // Timer period in milliseconds
-#define TIMER_PERIOD_HF 2 // Timer period in milliseconds
+#define TIMER_PERIOD_LF 5000 // Timer period in microseconds
+#define TIMER_PERIOD_HF 2500 // Timer period in microseconds
 
 
 void setup() {
@@ -39,7 +39,7 @@ void setup() {
 
 
     esp_timer_create(&lf_timer_args, &lf_timer_handle);   // Create timer
-    esp_timer_start_periodic(lf_timer_handle, TIMER_PERIOD_LF * 1000); 
+    esp_timer_start_periodic(lf_timer_handle, TIMER_PERIOD_LF ); 
     //////////////////
     
 
@@ -53,7 +53,7 @@ void setup() {
     };
 
     esp_timer_create(&hf_timer_args, &hf_timer_handle);
-    esp_timer_start_periodic(hf_timer_handle, TIMER_PERIOD_HF * 1000);
+    esp_timer_start_periodic(hf_timer_handle, TIMER_PERIOD_HF );
     //////////////////
     
     adc1_config_width(ADC_WIDTH_BIT_12); // Set ADC width to 12 bits

@@ -1,5 +1,6 @@
 #include "camera.h"
 
+static uint32_t adc_value = 0; // Variable to store ADC value
 
 void send_pulse()
 {
@@ -7,7 +8,13 @@ void send_pulse()
     return;
 }
 
-int read_camera_adc()
+void get_camera_adc()
+{   
+    adc_value = adc1_get_raw(ADC1_CHANNEL_6); // Read ADC value
+    return;
+}
+
+uint32_t read_camera_adc()
 {
-    return adc_value;
+    return adc_value; // Return the last measured ADC value
 }
