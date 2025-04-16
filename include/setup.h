@@ -2,8 +2,11 @@
 #define SETUP_H
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+
 #include "driver/gpio.h"
 #include "driver/adc.h"
+#include "driver/mcpwm.h"
+
 #include "esp_timer.h"
 #include "esp_system.h"
 #include "esp_log.h"
