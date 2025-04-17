@@ -18,7 +18,11 @@
         <li class='output-pin'>GPIO_11:  Serial Input (SI) Pulse Pin</li>
         <li class='output-pin'>GPIO_12:  Motor PWM Output A</li>
         <li class='output-pin'>GPIO_13:  Motor PWM Output B</li>
-        <li></li>
+        <li class='output-pin'>GPIO_22:  Servo PWM Output</li>
+    </ul>
+    <ul>
+        <li>Lower Servo Duty: 3.10%</li>
+        <li>Upper Servo Duty: 6.00%</li>
     </ul>
     <p></p>
 </html>

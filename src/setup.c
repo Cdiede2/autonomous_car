@@ -58,12 +58,35 @@ void setup()
 
     mcpwm_config_t pwm_config = {
         .frequency = 100,                 // Frequency = 100Hz
-        .cmpr_a = 80.0,                   // Duty cycle of PWMxA = 50.0%
-        .cmpr_b = 30.0,                   // Duty cycle of PWMxB = 50.0%
+        .cmpr_a = 0.0,                   // Duty cycle of PWMxA = 50.0%
+        .cmpr_b = 0.0,                   // Duty cycle of PWMxB = 50.0%
         .counter_mode = MCPWM_UP_COUNTER, // Up counter mode
     };
 
     mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &pwm_config); // Initialize with the configuration
+
+
+    // Configure Servo PWM
+    ledc_timer_config_t ledc_config = {
+        .speed_mode = LEDC_LOW_SPEED_MODE, // High speed mode
+        .timer_num = LEDC_TIMER_0,          // Timer selection
+        .duty_resolution = LEDC_TIMER_13_BIT, // Set duty resolution to 13 bits
+        .freq_hz = 50,                          // Frequency of PWM signal
+        .clk_cfg = LEDC_AUTO_CLK,          // Use default clock source
+    };
+
+    ledc_timer_config(&ledc_config); // Configure LEDC timer
+
+    ledc_channel_config_t ledc_channel = {
+        .speed_mode = LEDC_LOW_SPEED_MODE, // Low Speed Mode
+        .channel = LEDC_CHANNEL_0,         // Channel selection
+        .intr_type = LEDC_INTR_DISABLE,    // Disable interrupts
+        .timer_sel = LEDC_TIMER_0,         // Timer selection
+        .gpio_num = GPIO_NUM_22,           // GPIO pin for servo
+        .duty = 0,                         // Initial duty cycle
+        .hpoint = 0,
+    };
+    ledc_channel_config(&ledc_channel); // Configure LEDC channel
 
     // Configure ADC
     adc1_config_width(ADC_WIDTH_BIT_12);                       // Set ADC width to 12 bits

@@ -4,10 +4,11 @@
 #include "freertos/task.h"
 
 #include "driver/gpio.h"
-#include "driver/adc.h"
-#include "driver/mcpwm.h"
+#include "driver/adc.h"         // Used to read ADC values from camera
+#include "driver/mcpwm.h"       // Used to drive Motor
+#include "driver/ledc.h"        // Used to drive Servo
 
-#include "esp_timer.h"
+#include "esp_timer.h"          // Used to set Timer up for SI pulse
 #include "esp_system.h"
 #include "esp_log.h"
 
