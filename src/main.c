@@ -31,9 +31,9 @@ void app_main()
         uint32_t adc_value = 0;
 
         // (void)send_pulse();
-        vTaskDelay(pdMS_TO_TICKS(20));                 // Delay for 250ms
-        adc_value = (uint32_t)read_camera_adc();                        // Read ADC value
-        
+        vTaskDelay(pdMS_TO_TICKS(20));           // Delay for 250ms
+        adc_value = (uint32_t)read_camera_adc(); // Read ADC value
+
         // Print Boolean Representation of adc_value
         char binary_representation[17]; // Assuming a 32-bit ADC value
         for (int i = 15; i >= 0; i--)

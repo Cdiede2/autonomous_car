@@ -6,7 +6,6 @@
 #include "driver/adc.h"
 #include "esp_log.h"
 
-
 static bool send_pulse_flag = false;
 static bool lf_timer_state = false;
 static bool hf_timer_state = false;
@@ -44,21 +43,22 @@ static void IRAM_ATTR lf_timer_isr(void *arg)
     gpio_set_level(GPIO_NUM_2, lf_timer_state);
     lf_timer_state = !lf_timer_state;
 
-    if ( value == 29 ) {
+    if (value == 80)
+    {
         // adc_value = adc1_get_raw(ADC1_CHANNEL_6); // Read ADC value
         // ESP_LOGI("ADC", "ADC Value: %llu", adc_value); // Log ADC value
         (void)get_camera_adc();
     }
 
     //  1 + #Number of Pixels
-    if( value >= 129 ) {
+    if (value >= 135)
+    {
         send_pulse_flag = true;
         value = 0;
     }
     value++;
     return;
 }
-
 
 /**
  * @brief High-Frequency Timer interrupt service routine (ISR).

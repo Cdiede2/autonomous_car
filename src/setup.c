@@ -52,20 +52,19 @@ void setup()
     esp_timer_start_periodic(hf_timer_handle, TIMER_PERIOD_HF);
     //////////////////
 
-
     // Configure Motor PWM
     mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, GPIO_NUM_12);
     mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0B, GPIO_NUM_13);
 
     mcpwm_config_t pwm_config = {
-        .frequency = 100,       // Frequency = 100Hz
-        .cmpr_a = 50.0,       // Duty cycle of PWMxA = 50.0%
-        .cmpr_b = 50.0,       // Duty cycle of PWMxB = 50.0%
+        .frequency = 100,                 // Frequency = 100Hz
+        .cmpr_a = 80.0,                   // Duty cycle of PWMxA = 50.0%
+        .cmpr_b = 30.0,                   // Duty cycle of PWMxB = 50.0%
         .counter_mode = MCPWM_UP_COUNTER, // Up counter mode
     };
 
     mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &pwm_config); // Initialize with the configuration
-    
+
     // Configure ADC
     adc1_config_width(ADC_WIDTH_BIT_12);                       // Set ADC width to 12 bits
     adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_0); // Set attenuation

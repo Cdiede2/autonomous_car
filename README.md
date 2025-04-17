@@ -1,12 +1,14 @@
 <html>
-    <style>
-        .output-pin {
-            color: rgb(255, 0, 0);
-        }
-        .input-pin {
-            color: rgb(0, 255, 0);
-        }
-    </style>
+    <header>
+        <style>
+            .output-pin {
+                color: rgb(255, 0, 0);
+            }
+            .input-pin {
+                color: rgb(0, 255, 0);
+            }
+        </style>
+    </header>
     <h1>ECE454: Autonomous Car Project</h1>
     <hr>
     <h2>Pins Used:</h2>

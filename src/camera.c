@@ -9,7 +9,7 @@ void send_pulse()
 }
 
 void get_camera_adc()
-{   
+{
     adc_value = adc1_get_raw(ADC1_CHANNEL_6); // Read ADC value
     return;
 }
