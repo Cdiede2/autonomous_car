@@ -62,7 +62,7 @@ void app_main()
         const char *TAG_CONTROL = "APP_MAIN::Control_Loop";
 
         uint32_t adc_value = 0;
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(50));
         adc_value = (uint32_t)read_camera_adc(); // Read ADC value
         print_binary((uint32_t)adc_value);
 
@@ -117,7 +117,7 @@ float servo_control(float setpoint, float measured_value, float dt)
     return output;
 }
 
-#define binary_size 12
+#define binary_size 17
 void print_binary(uint32_t value)
 {
     const char *TAG = "app_main::print_binary";
@@ -127,6 +127,6 @@ void print_binary(uint32_t value)
         binary_representation[i] = value & (1 << (binary_size - 2 - i)) ? '1' : '0';
     }
     binary_representation[binary_size - 1] = '\0';
-    ESP_LOGI(TAG, "%lu - %s", value, binary_representation);
+    ESP_LOGI(TAG, "%s", binary_representation);
     return;
 }
