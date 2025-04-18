@@ -1,8 +1,8 @@
 #include "setup.h"
 
 // Timer Configuration
-#define TIMER_PERIOD_LF 5000 // Timer half-period in microseconds
-#define TIMER_PERIOD_HF 2500 // Timer half-period in microseconds
+#define TIMER_PERIOD_LF 100 // Timer half-period in microseconds
+#define TIMER_PERIOD_HF 50 // Timer half-period in microseconds
 
 void setup()
 {
