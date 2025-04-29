@@ -2,6 +2,7 @@
 #define CAMERA_H
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "driver/timer.h"
 
 #include "driver/gpio.h"
 #include "driver/adc.h"
@@ -9,9 +10,9 @@
 
 #include <math.h>
 
-#define AD_THRESH 1000
-#define UPPER_CYCLE 100
-#define LOWER_CYCLE 30
+#define AD_THRESH ((0.9/3.30) * 4095)
+#define UPPER_CYCLE 220
+#define LOWER_CYCLE 40
 
 static bool send_pulse_flag = false;
 static bool lf_timer_state = false;
@@ -43,31 +44,37 @@ void clear_camera_adc();
  */
 uint32_t read_camera_adc();
 
-
 /**
  * @brief Low-Frequency Timer interrupt service routine (ISR).
  *  Produces the Clock output on GPIO2
  */
 static void IRAM_ATTR lf_timer_isr(void *arg)
 {
-    static char value = 0;
+    const char TAG[] = "KMS";
+    static int value = 0;
     static char clk_outp = 0;
 
     gpio_set_level(GPIO_NUM_2, lf_timer_state);
     lf_timer_state = !lf_timer_state;
 
-    if (value == LOWER_CYCLE)
-    {
-        (void)get_camera_adc(0);
+
+
+    // Are we in a read state?
+
+    //Read current pixel value.
+
+    int bit = (value  - LOWER_CYCLE) * 31 / (UPPER_CYCLE - LOWER_CYCLE);
+    if ( value > LOWER_CYCLE ) {
+        (void)get_camera_adc(bit);
     }
-
-
 
     //  1 + #Number of Pixels
     if (value >= UPPER_CYCLE)
     {
         send_pulse_flag = true;
+        // Enable hf_timer ISR here
         (void)clear_camera_adc();
+        ESP_LOGI(TAG, "----------");
         value = 0;
     }
     value++;
@@ -90,7 +97,9 @@ static void IRAM_ATTR hf_timer_isr(void *arg)
         {
             gpio_set_level(GPIO_NUM_11, 0);
             send_pulse_flag = false; // Reset the pulse flag
+            // Disable this ISR here
         }
     }
+    
     return;
 }

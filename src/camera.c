@@ -11,13 +11,8 @@ void send_pulse()
 void get_camera_adc( size_t bit )
 {   
     const char TAG[] = "get_camera_adc";
-    // ESP_LOGI(TAG, ">> %u", bit);
-    adc_value |= ( adc1_get_raw(ADC1_CHANNEL_6) < AD_THRESH )?( 1 << bit ):0;
-    if( bit < 0 || bit > 31 ) {
-        ESP_LOGE(TAG, "Bit outside 0 to 31 range: %u", bit);
-    }
-
-    // adc_value =  adc1_get_raw(ADC1_CHANNEL_6) ); // Read ADC value
+    adc_value =  adc1_get_raw(ADC1_CHANNEL_6); // Read ADC value
+    ESP_LOGI(TAG, "[ %u ] == %i", bit, (adc_value < 1024)?1:0);
     return;
 }
 
