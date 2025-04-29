@@ -8,10 +8,12 @@
 #include "driver/gpio.h" // Used to drive GPIO pins
 #include "driver/adc.h"  // Used to read ADC values
 
-#include "setup.h"
-#include "camera.h"
-#include "motor.h"
-#include "servo.h"
+// #include "setup.h"
+// #include "camera.h"
+// #include "motor.h"
+// #include "servo.h"
+#include "events.h"
+
 /**
  * @brief Controls the servo motor using PID control.
  * @param setpoint The desired position of the servo motor.

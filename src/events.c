@@ -1,8 +1,4 @@
-#include "setup.h"
-
-// Timer Configuration
-#define TIMER_PERIOD_LF 180 // Timer half-period in microseconds
-#define TIMER_PERIOD_HF 90 // Timer half-period in microseconds
+#include "events.h"
 
 void setup()
 {
@@ -93,3 +89,74 @@ void setup()
     adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_0); // Set attenuation
     return;
 }
+
+void send_pulse()
+{
+    send_pulse_flag = true; // Set the pulse flag to true
+    return;
+}
+
+void get_camera_adc( size_t bit )
+{   
+    const char TAG[] = "get_camera_adc";
+    adc_value =  adc1_get_raw(ADC1_CHANNEL_6); // Read ADC value
+    ESP_LOGI(TAG, "[ %u ] == %i", bit, (adc_value < 1024)?1:0);
+    return;
+}
+
+uint32_t read_camera_adc()
+{
+    return adc_value; // Return the last measured ADC value
+}
+
+void clear_camera_adc() {
+    adc_value = 0;
+}
+
+void set_servo_duty( float duty_cycle )
+{   
+    duty_cycle = ( duty_cycle > UPPER_BOUND ) ? UPPER_BOUND : duty_cycle; // Limit duty cycle to upper bound
+    duty_cycle = ( duty_cycle < LOWER_BOUND ) ? LOWER_BOUND : duty_cycle; // Limit duty cycle to lower bound
+
+    ledc_set_duty( LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, duty_cycle * ( (1 << 13) - 1)); // Set duty cycle
+    ledc_update_duty( LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0 ); // Update duty cycle
+    return;
+}
+
+void forward_vel(float duty_cycle)
+{
+    duty_cycle = (duty_cycle > 100.0) ? 100.0 : duty_cycle; // Limit duty cycle to 100%
+    duty_cycle = (duty_cycle < 0.0) ? 0.0 : duty_cycle;     // Limit duty cycle to 0%
+
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_GEN_A, duty_cycle);
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_GEN_B, 0.0);
+    mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_0);
+
+    return;
+}
+
+void reverse_vel(float duty_cycle)
+{
+    // mcpwm_stop(MCPWM_UNIT_0, MCPWM_TIMER_0);
+    duty_cycle = (duty_cycle > 100.0) ? 100.0 : duty_cycle; // Limit duty cycle to 100%
+    duty_cycle = (duty_cycle < 0.0) ? 0.0 : duty_cycle;     // Limit duty cycle to 0%
+
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_GEN_A, 0.0);
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_GEN_B, duty_cycle);
+    mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_0);
+
+    return;
+}
+
+void stop_vel(void)
+{
+    // mcpwm_stop(MCPWM_UNIT_0, MCPWM_TIMER_0);
+
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_GEN_A, 0.0);
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_GEN_B, 0.0);
+    mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_0);
+
+    return;
+}
+
+
